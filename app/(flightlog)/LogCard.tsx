@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import LogItem from "./LogItem";
 
-function LogCard(props) {
+function LogCard(props: {
+  style?: React.CSSProperties;
+  data: any[];
+}) {
   const { data } = props;
   const [logs, setLogs] = useState(data);
 
