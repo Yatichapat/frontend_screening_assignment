@@ -10,15 +10,30 @@ import LogForm from "../(flightlog)/LogForm";
 
 const flightLogService = new FlightLogService();
 
+function formatDuration(seconds: number): string {
+  if (seconds < 60) {
+    return `${Math.round(seconds)} sec`;
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) {
+    return `${Math.round(minutes)} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  return `${Math.round(hours)} hours`;
+}
+
+
 export default function Home() {
   const [logs, setLogs] = useState<any[]>([]);
+  const [avgTimes, setAvgTimes] = useState<Record<string, number>>({});
 
   const handleAddLog = useCallback(
     (log: any) => {
-      logs.push(log);
-      setLogs(logs);
-    },
-    [logs]
+      setLogs((prev) => [...prev, log]);
+  },
+  []
   );
 
   useEffect(() => {
@@ -29,6 +44,46 @@ export default function Home() {
 
     fetch();
   }, []);
+
+  useEffect(() => {
+  const departures: Record<string, any> = {};
+  const routes: Record<string, { sum: number; count: number }> = {};
+
+  logs.forEach((log) => {
+    if (log.type === "departure") {
+      // collect latest departure per passenger
+      departures[log.passengerName] = log;
+    }
+
+    if (log.type === "arrival") {
+      const departure = departures[log.passengerName];
+      if (!departure) return; // not found matching departure
+
+      const routeKey = `${departure.airport} to ${log.airport}`;
+
+      const duration =
+        Number(log.timestamp) - Number(departure.timestamp);
+
+      if (!routes[routeKey]) {
+        routes[routeKey] = { sum: 0, count: 0 };
+      }
+
+      routes[routeKey].sum += duration;
+      routes[routeKey].count += 1;
+
+          // remove the departure once matched
+      delete departures[log.passengerName];
+    }
+  });
+
+  const result: Record<string, number> = {};
+
+  Object.entries(routes).forEach(([route, { sum, count }]) => {
+    result[route] = sum / count;
+  });
+
+  setAvgTimes(result);
+}, [logs]);
 
   return (
     <div className={styles.container}>
@@ -43,6 +98,16 @@ export default function Home() {
         <div className={styles.card} style={{ margin: 16, width: "100%" }}>
           <h2>Flight Logs</h2>
           <LogCard style={{ width: "100%" }} data={logs}></LogCard>
+          <button
+            onClick={() => {
+              console.log("Average Travel Time Per Route:");
+              Object.entries(avgTimes).forEach(([route, avg]) => {
+                console.log(`${route}: ${formatDuration(avg)}`);
+              });
+            }}
+          >
+            Print avg time to console
+          </button>
         </div>
         <div className={styles.card} style={{ margin: 16, width: "100%" }}>
           <h2>Departure Logging</h2>
