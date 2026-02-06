@@ -1,4 +1,11 @@
-function LogItem(props) {
+function LogItem(props: {
+  item: {
+    passengerName: string;
+    airport: string;
+    timestamp: string;
+    type: "departure" | "arrival";
+  };
+}) {
   const { item } = props;
   return (
     <div style={{ display: "flex" }}>
