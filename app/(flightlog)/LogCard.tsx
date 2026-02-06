@@ -33,8 +33,8 @@ function LogCard(props: {
         <span style={{ flex: 1 }}>Timestamp</span>
         <span style={{ flex: 1 }}>Type</span>
       </div>
-      {logs.map((item) => (
-        <LogItem key={`${item.passengerName}`} item={item}></LogItem>
+      {logs.map((item, index) => (
+        <LogItem key={`${item.passengerName}-${item.airport}-${item.timestamp}-${item.type}`} item={item}></LogItem>
       ))}
     </div>
   );
