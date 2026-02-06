@@ -11,10 +11,10 @@ import LogForm from "../(flightlog)/LogForm";
 const flightLogService = new FlightLogService();
 
 export default function Home() {
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<any[]>([]);
 
   const handleAddLog = useCallback(
-    (log) => {
+    (log: any) => {
       logs.push(log);
       setLogs(logs);
     },
@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     const fetch = async () => {
       const data = await flightLogService.getLogs();
-      setLogs(data);
+      setLogs(data as any[]);
     };
 
     fetch();
