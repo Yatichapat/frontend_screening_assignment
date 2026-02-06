@@ -6,7 +6,12 @@ const emptyForm = {
   timestamp: "",
 };
 
-function LogForm(props) {
+function LogForm(props: {
+  style?: React.CSSProperties;
+  data: any[];
+  type: "departure" | "arrival";
+  onSubmit: (log: any) => void;
+}) {
   const { type, onSubmit } = props;
 
   const [formData, setFormData] = useState(emptyForm);
@@ -16,7 +21,7 @@ function LogForm(props) {
     setFormData(emptyForm);
   }, [formData, type, onSubmit]);
 
-  const handleChange = useCallback(({ target }) => {
+  const handleChange = useCallback(({ target }: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
       [target.id]: target.value,
