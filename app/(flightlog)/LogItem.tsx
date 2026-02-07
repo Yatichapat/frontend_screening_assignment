@@ -20,11 +20,11 @@ function LogItem(props: {
 }) {
   const { item } = props;
   return (
-    <div style={{ display: "flex" }}>
-      <span style={{ flex: 1 }}>{item.passengerName}</span>
-      <span style={{ flex: 1 }}>{item.airport}</span>
-      <span style={{ flex: 1 }}>{formatTimestamp(item.timestamp)}</span>
-      <span style={{ flex: 1 }}>
+    <div className="grid grid-cols-4 gap-4 rounded-lg border border-slate-100 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm">
+      <span className="font-medium text-slate-900">{item.passengerName}</span>
+      <span className="capitalize">{item.airport}</span>
+      <span>{formatTimestamp(item.timestamp)}</span>
+      <span className="font-semibold text-slate-600">
         {item.type === "departure" ? "Departure" : "Arrival"}
       </span>
     </div>

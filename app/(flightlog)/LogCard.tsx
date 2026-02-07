@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import LogItem from "./LogItem";
 
-function LogCard(props: {
-  style?: React.CSSProperties;
-  data: any[];
-}) {
+function LogCard(props: { data: any[] }) {
   const { data } = props;
   const [logs, setLogs] = useState(data);
 
@@ -13,29 +10,21 @@ function LogCard(props: {
   }, [data]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        rowGap: 4,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          marginBottom: 4,
-          fontSize: 16,
-          fontWeight: "bold",
-        }}
-      >
-        <span style={{ flex: 1 }}>Passenger Name</span>
-        <span style={{ flex: 1 }}>Airport</span>
-        <span style={{ flex: 1 }}>Timestamp</span>
-        <span style={{ flex: 1 }}>Type</span>
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-4 gap-4 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-slate-600">
+        <span>Passenger Name</span>
+        <span>Airport</span>
+        <span>Timestamp</span>
+        <span>Type</span>
       </div>
-      {logs.map((item, index) => (
-        <LogItem key={`${item.passengerName}-${item.airport}-${item.timestamp}-${item.type}`} item={item}></LogItem>
-      ))}
+      <div className="flex flex-col gap-2">
+        {logs.map((item) => (
+          <LogItem
+            key={`${item.passengerName}-${item.airport}-${item.timestamp}-${item.type}`}
+            item={item}
+          ></LogItem>
+        ))}
+      </div>
     </div>
   );
 }
