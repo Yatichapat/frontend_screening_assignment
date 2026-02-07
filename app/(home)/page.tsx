@@ -2,7 +2,6 @@
 
 import { useCallback, useState, useEffect } from "react";
 import Image from "next/image";
-import styles from "./Home.module.css";
 import { FlightLogService } from "../(flightlog)/fightlog.service";
 import LogCard from "../(flightlog)/LogCard";
 import LogForm from "../(flightlog)/LogForm";
@@ -30,8 +29,8 @@ export default function Home() {
   const [avgTimes, setAvgTimes] = useState<Record<string, number>>({});
 
   const handleAddLog = useCallback(
-    (log: any) => {
-      setLogs((prev) => [...prev, log]);
+    (departureLog: any, arrivalLog: any) => {
+      setLogs((prev) => [...prev, departureLog, arrivalLog]);
   },
   []
   );
@@ -86,63 +85,66 @@ export default function Home() {
 }, [logs]);
 
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next Airline!</a>
-        </h1>
-        <p className={styles.description}>
-          Get started by editing{" "}
-          <code className={styles.code}>app/(home)/page.tsx</code>
-        </p>
-        <div className={styles.card} style={{ margin: 16, width: "100%" }}>
-          <h2>Flight Logs</h2>
-          <LogCard style={{ width: "100%" }} data={logs}></LogCard>
-          <button
-            onClick={() => {
-              console.log("Average Travel Time Per Route:");
-              Object.entries(avgTimes).forEach(([route, avg]) => {
-                console.log(`${route}: ${formatDuration(avg)}`);
-              });
-            }}
-          >
-            Print avg time to console
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-sky-50 to-rose-50">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12">
+        <div className="flex flex-col items-start gap-3">
+          <div className="flex w-full justify-center">
+            <span className="text-black text-6xl font-bold">
+              Welcome to
+            </span>
+            <span className="mx-3 text-blue-800 text-6xl font-bold">
+              Next Airline!
+            </span>
+          </div>
+
+
+          <p className="max-w-2xl text-base text-slate-600">
+            Track departures and arrivals in real time. Review your logs, then
+            calculate average travel time by route.
+          </p>
         </div>
-        <div className={styles.card} style={{ margin: 16, width: "100%" }}>
-          <h2>Departure Logging</h2>
-          <LogForm
-            style={{ width: "100%" }}
-            data={logs}
-            type={"departure"}
-            onSubmit={handleAddLog}
-          ></LogForm>
-        </div>
-        <div className={styles.card} style={{ margin: 16, width: "100%" }}>
-          <h2>Arrival Logging</h2>
-          <LogForm
-            style={{ width: "100%" }}
-            data={logs}
-            type={"arrival"}
-            onSubmit={handleAddLog}
-          ></LogForm>
-        </div>
+
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg shadow-slate-200/60 backdrop-blur">
+          <h2 className="mb-4 text-xl font-semibold text-slate-900">
+            Booking Form
+          </h2>
+          <LogForm data={logs} onSubmit={handleAddLog}></LogForm>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg shadow-slate-200/60 backdrop-blur">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-xl font-semibold text-slate-900">Flight Logs</h2>
+              <button
+                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                onClick={() => {
+                  console.log("Average Travel Time Per Route:");
+                  Object.entries(avgTimes).forEach(([route, avg]) => {
+                    console.log(`${route}: ${formatDuration(avg)}`);
+                  });
+                }}
+              >
+                Print avg time to console
+              </button>
+            </div>
+            <LogCard data={logs}></LogCard>
+          </div>
+        </section>
+
         {/* Render boarding pass here */}
         {/* {[].map((_, i) => ( */}
         {/*   <BoardingPassCard key={i} /> */}
         {/* ))} */}
       </main>
 
-      <footer className={styles.footer}>
+      <footer className="border-t border-slate-200/80 bg-white/70 px-6 py-6">
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
           rel="noopener noreferrer"
+          className="mx-auto flex w-full max-w-6xl items-center justify-center gap-3 text-sm font-medium text-slate-500"
         >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
         </a>
       </footer>
     </div>
