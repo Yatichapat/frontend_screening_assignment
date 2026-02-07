@@ -97,11 +97,12 @@ export default function Home() {
             </span>
           </div>
 
-
-          <p className="max-w-2xl text-base text-slate-600">
-            Track departures and arrivals in real time. Review your logs, then
-            calculate average travel time by route.
-          </p>
+          <div className="flex w-full justify-center">
+            <p className="max-w-2xl text-center text-base text-slate-600">
+              Track departures and arrivals in real time. Review your logs, then
+              calculate average travel time by route.
+            </p>
+          </div>
         </div>
 
         <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg shadow-slate-200/60 backdrop-blur">
@@ -115,17 +116,6 @@ export default function Home() {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-slate-900">Flight Logs</h2>
-              <button
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-                onClick={() => {
-                  console.log("Average Travel Time Per Route:");
-                  Object.entries(avgTimes).forEach(([route, avg]) => {
-                    console.log(`${route}: ${formatDuration(avg)}`);
-                  });
-                }}
-              >
-                Print avg time to console
-              </button>
             </div>
             <LogCard data={logs}></LogCard>
           </div>
