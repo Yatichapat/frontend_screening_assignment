@@ -1,4 +1,6 @@
 import { useState, useCallback } from "react";
+import { toUnixSeconds } from "./utils";
+import { FlightLog } from "./types";
 
 const emptyForm = {
   firstName: "",
@@ -10,21 +12,11 @@ const emptyForm = {
 };
 
 function LogForm(props: {
-  data: any[];
-  onSubmit: (departurelog: any, arrivalLog: any) => void;
+  onSubmit: (departureLog: FlightLog, arrivalLog: FlightLog) => void;
 }) {
   const { onSubmit } = props;
 
   const [formData, setFormData] = useState(emptyForm);
-
-  const toUnixSeconds = (value: string) => {
-    const parsed = Date.parse(value);
-    if (Number.isNaN(parsed)) {
-      return "";
-    }
-
-    return Math.floor(parsed / 1000).toString();
-  };
 
   const handleSubmit = useCallback(() => {
     const passengerName = `${formData.firstName} ${formData.surname}`.trim();
@@ -33,14 +25,14 @@ function LogForm(props: {
       passengerName,
       airport: formData.departureAirport,
       timestamp: toUnixSeconds(formData.departureTime),
-      type: "departure",
+      type: "departure" as const,
     };
     
     const arrivalLog = {
       passengerName,
       airport: formData.arrivalAirport,
       timestamp: toUnixSeconds(formData.arrivalTime),
-      type: "arrival",
+      type: "arrival" as const,
     };
     
     onSubmit(departureLog, arrivalLog);

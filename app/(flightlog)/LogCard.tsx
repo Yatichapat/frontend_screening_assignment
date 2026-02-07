@@ -1,23 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
 import LogItem from "./LogItem";
+import { FlightLog, FlightLogRow } from "./types";
 
-function LogCard(props: { data: any[] }) {
+function LogCard(props: { data: FlightLog[] }) {
   const { data } = props;
-  const [logs, setLogs] = useState(data);
+  const [logs, setLogs] = useState<FlightLog[]>(data);
 
   useEffect(() => {
     setLogs(data);
   }, [data]);
 
-  const pairedLogs = useMemo(() => {
-    const departures: Record<string, any> = {};
-    const rows: Array<{
-      passengerName: string;
-      route: string;
-      departureTimestamp: string;
-      arrivalTimestamp: string;
-      durationSeconds: number | null;
-    }> = [];
+  const pairedLogs = useMemo<FlightLogRow[]>(() => {
+    const departures: Record<string, FlightLog> = {};
+    const rows: FlightLogRow[] = [];
 
     const ordered = [...logs].sort(
       (a, b) => Number(a.timestamp) - Number(b.timestamp)

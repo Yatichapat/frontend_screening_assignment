@@ -3,33 +3,18 @@
 import { useCallback, useState, useEffect } from "react";
 import Image from "next/image";
 import { FlightLogService } from "../(flightlog)/fightlog.service";
+import { FlightLog } from "../(flightlog)/types";
 import LogCard from "../(flightlog)/LogCard";
 import LogForm from "../(flightlog)/LogForm";
 // import BoardingPassCard from "../(boardingpass)/BoardingPassCard";
 
 const flightLogService = new FlightLogService();
 
-function formatDuration(seconds: number): string {
-  if (seconds < 60) {
-    return `${Math.round(seconds)} sec`;
-  }
-
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) {
-    return `${Math.round(minutes)} min`;
-  }
-
-  const hours = Math.floor(minutes / 60);
-  return `${Math.round(hours)} hours`;
-}
-
-
 export default function Home() {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [avgTimes, setAvgTimes] = useState<Record<string, number>>({});
+  const [logs, setLogs] = useState<FlightLog[]>([]);
 
   const handleAddLog = useCallback(
-    (departureLog: any, arrivalLog: any) => {
+    (departureLog: FlightLog, arrivalLog: FlightLog) => {
       setLogs((prev) => [...prev, departureLog, arrivalLog]);
   },
   []
@@ -38,51 +23,11 @@ export default function Home() {
   useEffect(() => {
     const fetch = async () => {
       const data = await flightLogService.getLogs();
-      setLogs(data as any[]);
+      setLogs(data);
     };
 
     fetch();
   }, []);
-
-  useEffect(() => {
-  const departures: Record<string, any> = {};
-  const routes: Record<string, { sum: number; count: number }> = {};
-
-  logs.forEach((log) => {
-    if (log.type === "departure") {
-      // collect latest departure per passenger
-      departures[log.passengerName] = log;
-    }
-
-    if (log.type === "arrival") {
-      const departure = departures[log.passengerName];
-      if (!departure) return; // not found matching departure
-
-      const routeKey = `${departure.airport} to ${log.airport}`;
-
-      const duration =
-        Number(log.timestamp) - Number(departure.timestamp);
-
-      if (!routes[routeKey]) {
-        routes[routeKey] = { sum: 0, count: 0 };
-      }
-
-      routes[routeKey].sum += duration;
-      routes[routeKey].count += 1;
-
-          // remove the departure once matched
-      delete departures[log.passengerName];
-    }
-  });
-
-  const result: Record<string, number> = {};
-
-  Object.entries(routes).forEach(([route, { sum, count }]) => {
-    result[route] = sum / count;
-  });
-
-  setAvgTimes(result);
-}, [logs]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-sky-50 to-rose-50">
@@ -109,7 +54,7 @@ export default function Home() {
           <h2 className="mb-4 text-xl font-semibold text-slate-900">
             Booking Form
           </h2>
-          <LogForm data={logs} onSubmit={handleAddLog}></LogForm>
+          <LogForm onSubmit={handleAddLog}></LogForm>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-lg shadow-slate-200/60 backdrop-blur">
