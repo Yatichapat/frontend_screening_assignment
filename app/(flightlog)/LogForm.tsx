@@ -17,20 +17,29 @@ function LogForm(props: {
 
   const [formData, setFormData] = useState(emptyForm);
 
+  const toUnixSeconds = (value: string) => {
+    const parsed = Date.parse(value);
+    if (Number.isNaN(parsed)) {
+      return "";
+    }
+
+    return Math.floor(parsed / 1000).toString();
+  };
+
   const handleSubmit = useCallback(() => {
     const passengerName = `${formData.firstName} ${formData.surname}`.trim();
     
     const departureLog = {
       passengerName,
       airport: formData.departureAirport,
-      timestamp: formData.departureTime,
+      timestamp: toUnixSeconds(formData.departureTime),
       type: "departure",
     };
     
     const arrivalLog = {
       passengerName,
       airport: formData.arrivalAirport,
-      timestamp: formData.arrivalTime,
+      timestamp: toUnixSeconds(formData.arrivalTime),
       type: "arrival",
     };
     
@@ -114,13 +123,12 @@ function LogForm(props: {
             Departure Time
           </label>
           <input
-            type="text"
+            type="datetime-local"
             id="departureTime"
             name="departureTime"
             value={formData.departureTime}
             onChange={handleChange}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
-            placeholder="1630454400"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -128,13 +136,12 @@ function LogForm(props: {
             Arrival Time
           </label>
           <input
-            type="text"
+            type="datetime-local"
             id="arrivalTime"
             name="arrivalTime"
             value={formData.arrivalTime}
             onChange={handleChange}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-400 focus:outline-none"
-            placeholder="1630458000"
           />
         </div>
       </div>
